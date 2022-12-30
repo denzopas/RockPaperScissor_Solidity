@@ -1,0 +1,40 @@
+pragma solidity ^0.7.0;
+
+contract RockPaperScissors {
+    // define an enumeration for the possible moves
+    enum Move { Rock, Paper, Scissors }
+    
+    // define a struct and store the moves
+    struct Game {
+        address player1;
+        address player2;
+        Move move1;
+        Move move2;
+        bool finished;
+    }
+    
+    // define a mapping to store the games
+    mapping(uint => Game) public games;
+    
+    // define a function to create a new game
+    function createGame(Move move1) public {
+        // create a new game and store it in the mapping
+        uint id = games.length;
+        games[id] = Game(msg.sender, address(0), move1, Move.Rock, false);
+    }
+    
+    // define a function to join an existing game
+    function joinGame(uint id, Move move2) public {
+        // get the game from the mapping
+        Game storage game = games[id];
+        
+        // check if the game has already been finished
+        require(!game.finished, "This game has already been finished");
+        
+        // check if the game is already full
+        require(game.player2 == address(0), "This game is already full");
+        
+        // update the game with the second player's move
+        game.player2 = msg.sender;
+        game.move2 = move2;
+        game
